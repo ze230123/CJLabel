@@ -351,6 +351,8 @@
  */
 - (void)flushText;
 
+- (void)showSelectAtPoint:(CGPoint)point;
+
 @end
 
 

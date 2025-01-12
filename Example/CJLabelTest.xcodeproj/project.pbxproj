@@ -16,11 +16,11 @@
 		438257941C1A6F5F00A3DA24 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 438257921C1A6F5F00A3DA24 /* LaunchScreen.storyboard */; };
 		4382579F1C1A6F5F00A3DA24 /* CJLabelTestTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 4382579E1C1A6F5F00A3DA24 /* CJLabelTestTests.m */; };
 		438257AA1C1A6F5F00A3DA24 /* CJLabelTestUITests.m in Sources */ = {isa = PBXBuildFile; fileRef = 438257A91C1A6F5F00A3DA24 /* CJLabelTestUITests.m */; };
-		43C1652E25C92B1B00EAA38B /* CJLabel+UIMenu.m in Sources */ = {isa = PBXBuildFile; fileRef = 43C1652D25C92B1B00EAA38B /* CJLabel+UIMenu.m */; };
+		842E01D02D3259D9000D4116 /* CJLabel.m in Sources */ = {isa = PBXBuildFile; fileRef = 842E01CC2D3259D9000D4116 /* CJLabel.m */; };
+		842E01D12D3259D9000D4116 /* CJLabel+UIMenu.m in Sources */ = {isa = PBXBuildFile; fileRef = 842E01CD2D3259D9000D4116 /* CJLabel+UIMenu.m */; };
+		842E01D22D3259D9000D4116 /* CJLabelConfigure.m in Sources */ = {isa = PBXBuildFile; fileRef = 842E01CE2D3259D9000D4116 /* CJLabelConfigure.m */; };
 		B40ACCA71EB30CF3006DB787 /* AttributedTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = B40ACCA41EB30CF3006DB787 /* AttributedTableViewCell.m */; };
 		B40ACCA81EB30CF3006DB787 /* AttributedTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = B40ACCA51EB30CF3006DB787 /* AttributedTableViewCell.xib */; };
-		B431D5321D0545E700228988 /* CJLabel.m in Sources */ = {isa = PBXBuildFile; fileRef = B431D52E1D0545E700228988 /* CJLabel.m */; };
-		B45AC7ED1F8A7181006B5336 /* CJLabelConfigure.m in Sources */ = {isa = PBXBuildFile; fileRef = B45AC7EC1F8A7181006B5336 /* CJLabelConfigure.m */; };
 		B483EC891FBAC7AD000FCE06 /* FirstDetailViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B483EC861FBAC7AD000FCE06 /* FirstDetailViewController.m */; };
 		B483EC8A1FBAC7AD000FCE06 /* FirstDetailViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = B483EC881FBAC7AD000FCE06 /* FirstDetailViewController.xib */; };
 		B4928B9F1FB4003D0017A25C /* Example.json in Resources */ = {isa = PBXBuildFile; fileRef = B4928B9E1FB4003D0017A25C /* Example.json */; };
@@ -77,15 +77,15 @@
 		438257A91C1A6F5F00A3DA24 /* CJLabelTestUITests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CJLabelTestUITests.m; sourceTree = "<group>"; };
 		438257AB1C1A6F5F00A3DA24 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		4396AC9E23E6C3B800836CE2 /* CJLabelTest.entitlements */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.entitlements; name = CJLabelTest.entitlements; path = ../../../../../../.Trash/CJLabelTest.entitlements; sourceTree = "<group>"; };
-		43C1652C25C92B1B00EAA38B /* CJLabel+UIMenu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "CJLabel+UIMenu.h"; sourceTree = "<group>"; };
-		43C1652D25C92B1B00EAA38B /* CJLabel+UIMenu.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "CJLabel+UIMenu.m"; sourceTree = "<group>"; };
+		842E01C82D3259D9000D4116 /* CJLabel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CJLabel.h; sourceTree = "<group>"; };
+		842E01C92D3259D9000D4116 /* CJLabel+UIMenu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "CJLabel+UIMenu.h"; sourceTree = "<group>"; };
+		842E01CA2D3259D9000D4116 /* CJLabelConfigure.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CJLabelConfigure.h; sourceTree = "<group>"; };
+		842E01CC2D3259D9000D4116 /* CJLabel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CJLabel.m; sourceTree = "<group>"; };
+		842E01CD2D3259D9000D4116 /* CJLabel+UIMenu.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "CJLabel+UIMenu.m"; sourceTree = "<group>"; };
+		842E01CE2D3259D9000D4116 /* CJLabelConfigure.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CJLabelConfigure.m; sourceTree = "<group>"; };
 		B40ACCA31EB30CF3006DB787 /* AttributedTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AttributedTableViewCell.h; sourceTree = "<group>"; };
 		B40ACCA41EB30CF3006DB787 /* AttributedTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AttributedTableViewCell.m; sourceTree = "<group>"; };
 		B40ACCA51EB30CF3006DB787 /* AttributedTableViewCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = AttributedTableViewCell.xib; sourceTree = "<group>"; };
-		B431D52D1D0545E700228988 /* CJLabel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CJLabel.h; sourceTree = "<group>"; };
-		B431D52E1D0545E700228988 /* CJLabel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CJLabel.m; sourceTree = "<group>"; };
-		B45AC7EB1F8A7181006B5336 /* CJLabelConfigure.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CJLabelConfigure.h; sourceTree = "<group>"; };
-		B45AC7EC1F8A7181006B5336 /* CJLabelConfigure.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CJLabelConfigure.m; sourceTree = "<group>"; };
 		B483EC861FBAC7AD000FCE06 /* FirstDetailViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = FirstDetailViewController.m; path = CJLabelTest/FirstDetailViewController.m; sourceTree = SOURCE_ROOT; };
 		B483EC871FBAC7AD000FCE06 /* FirstDetailViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FirstDetailViewController.h; path = CJLabelTest/FirstDetailViewController.h; sourceTree = SOURCE_ROOT; };
 		B483EC881FBAC7AD000FCE06 /* FirstDetailViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = FirstDetailViewController.xib; path = CJLabelTest/FirstDetailViewController.xib; sourceTree = SOURCE_ROOT; };
@@ -154,8 +154,8 @@
 		438257831C1A6F5F00A3DA24 /* CJLabelTest */ = {
 			isa = PBXGroup;
 			children = (
+				842E01CF2D3259D9000D4116 /* CJLabel */,
 				4396AC9E23E6C3B800836CE2 /* CJLabelTest.entitlements */,
-				B431D52C1D0545E700228988 /* CJLabel */,
 				438257871C1A6F5F00A3DA24 /* AppDelegate.h */,
 				438257881C1A6F5F00A3DA24 /* AppDelegate.m */,
 				B40ACCAB1EB30D8F006DB787 /* Controllers */,
@@ -197,6 +197,28 @@
 			path = CJLabelTestUITests;
 			sourceTree = "<group>";
 		};
+		842E01CB2D3259D9000D4116 /* include */ = {
+			isa = PBXGroup;
+			children = (
+				842E01C82D3259D9000D4116 /* CJLabel.h */,
+				842E01C92D3259D9000D4116 /* CJLabel+UIMenu.h */,
+				842E01CA2D3259D9000D4116 /* CJLabelConfigure.h */,
+			);
+			path = include;
+			sourceTree = "<group>";
+		};
+		842E01CF2D3259D9000D4116 /* CJLabel */ = {
+			isa = PBXGroup;
+			children = (
+				842E01CB2D3259D9000D4116 /* include */,
+				842E01CC2D3259D9000D4116 /* CJLabel.m */,
+				842E01CD2D3259D9000D4116 /* CJLabel+UIMenu.m */,
+				842E01CE2D3259D9000D4116 /* CJLabelConfigure.m */,
+			);
+			name = CJLabel;
+			path = ../../Sources/CJLabel;
+			sourceTree = "<group>";
+		};
 		B40ACCAA1EB30D6A006DB787 /* Views */ = {
 			isa = PBXGroup;
 			children = (
@@ -220,20 +242,6 @@
 				B4C8931A1EB881EA00AC9E42 /* SecondDetailViewController.xib */,
 			);
 			name = Controllers;
-			path = ../../CJLabel;
-			sourceTree = "<group>";
-		};
-		B431D52C1D0545E700228988 /* CJLabel */ = {
-			isa = PBXGroup;
-			children = (
-				B431D52D1D0545E700228988 /* CJLabel.h */,
-				B431D52E1D0545E700228988 /* CJLabel.m */,
-				43C1652C25C92B1B00EAA38B /* CJLabel+UIMenu.h */,
-				43C1652D25C92B1B00EAA38B /* CJLabel+UIMenu.m */,
-				B45AC7EB1F8A7181006B5336 /* CJLabelConfigure.h */,
-				B45AC7EC1F8A7181006B5336 /* CJLabelConfigure.m */,
-			);
-			name = CJLabel;
 			path = ../../CJLabel;
 			sourceTree = "<group>";
 		};
@@ -375,14 +383,14 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				43C1652E25C92B1B00EAA38B /* CJLabel+UIMenu.m in Sources */,
 				B483EC891FBAC7AD000FCE06 /* FirstDetailViewController.m in Sources */,
 				4382578C1C1A6F5F00A3DA24 /* ViewController.m in Sources */,
+				842E01D22D3259D9000D4116 /* CJLabelConfigure.m in Sources */,
 				B40ACCA71EB30CF3006DB787 /* AttributedTableViewCell.m in Sources */,
-				B431D5321D0545E700228988 /* CJLabel.m in Sources */,
 				B4C8931B1EB881EA00AC9E42 /* SecondDetailViewController.m in Sources */,
-				B45AC7ED1F8A7181006B5336 /* CJLabelConfigure.m in Sources */,
+				842E01D02D3259D9000D4116 /* CJLabel.m in Sources */,
 				438257891C1A6F5F00A3DA24 /* AppDelegate.m in Sources */,
+				842E01D12D3259D9000D4116 /* CJLabel+UIMenu.m in Sources */,
 				438257861C1A6F5F00A3DA24 /* main.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -551,7 +559,7 @@
 					"$(PROJECT_DIR)/CJLabelTest",
 				);
 				INFOPLIST_FILE = CJLabelTest/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				OTHER_LDFLAGS = "";
 				PRODUCT_BUNDLE_IDENTIFIER = Jin.Lian.Test;
@@ -575,7 +583,7 @@
 					"$(PROJECT_DIR)/CJLabelTest",
 				);
 				INFOPLIST_FILE = CJLabelTest/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				OTHER_LDFLAGS = "";
 				PRODUCT_BUNDLE_IDENTIFIER = Jin.Lian.Test;

@@ -38,7 +38,8 @@ NSString * const kCJLinkStringIdentifierAttributesName       = @"kCJLinkStringId
 
 //当前显示的AttributedText
 @property (nonatomic, copy) NSAttributedString *renderedAttributedText;
-@property (nonatomic, strong) UILongPressGestureRecognizer *longPressGestureRecognizer;//长按手势
+@property (readwrite, atomic, strong) NSDataDetector *dataDetector;
+//@property (nonatomic, strong) UILongPressGestureRecognizer *longPressGestureRecognizer;//长按手势
 @property (nonatomic, strong) UITapGestureRecognizer *doubleTapGes;//双击手势
 /**
  是否需要计算支持复制的每个字符的frame大小
@@ -113,12 +114,15 @@ NSString * const kCJLinkStringIdentifierAttributesName       = @"kCJLinkStringId
     _allRunItemArray = [NSMutableArray arrayWithCapacity:3];
     _currentClickRunStrokeItem = nil;
     _CTLineVerticalLayoutArray = nil;
-    _longPressGestureRecognizer = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(longPressGestureDidFire:)];
-    _longPressGestureRecognizer.delegate = self;
-    [self addGestureRecognizer:_longPressGestureRecognizer];
+//    _longPressGestureRecognizer = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(longPressGestureDidFire:)];
+//    _longPressGestureRecognizer.delegate = self;
+//    [self addGestureRecognizer:_longPressGestureRecognizer];
     
     _enableCopy = NO;
     _caculateCTRunSizeBlock = nil;
+
+    self.dataDetector = [[NSDataDetector alloc] initWithTypes:NSTextCheckingTypeLink error:nil];
+
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(menuControllerDidHide) name:UIMenuControllerDidHideMenuNotification object:nil];
 }
 
@@ -131,9 +135,9 @@ NSString * const kCJLinkStringIdentifierAttributesName       = @"kCJLinkStringId
         CFRelease(_highlightFramesetter);
     }
     
-    if (_longPressGestureRecognizer) {
-        [self removeGestureRecognizer:_longPressGestureRecognizer];
-    }
+//    if (_longPressGestureRecognizer) {
+//        [self removeGestureRecognizer:_longPressGestureRecognizer];
+//    }
     if (_doubleTapGes) {
         [self removeGestureRecognizer:_doubleTapGes];
     }
@@ -150,7 +154,7 @@ NSString * const kCJLinkStringIdentifierAttributesName       = @"kCJLinkStringId
     _enableCopy = enableCopy;
     if (_enableCopy) {
         self.doubleTapGes =[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tapTwoAct:)];
-        self.doubleTapGes.numberOfTapsRequired = 2;
+        self.doubleTapGes.numberOfTapsRequired = 1;
         self.doubleTapGes.delegate = self;
         [self addGestureRecognizer:self.doubleTapGes];
         
@@ -1542,7 +1546,7 @@ NSString * const kCJLinkStringIdentifierAttributesName       = @"kCJLinkStringId
         labelSize.width += self.textInsets.left + self.textInsets.right;
         labelSize.height += self.textInsets.top + self.textInsets.bottom;
         
-        return labelSize;
+        return CGSizeMake(ceil(labelSize.width + 1), ceil(labelSize.height + 1));
     }
 }
 
@@ -1685,10 +1689,10 @@ NSString * const kCJLinkStringIdentifierAttributesName       = @"kCJLinkStringId
 
 #pragma mark - UIGestureRecognizerDelegate
 - (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldReceiveTouch:(UITouch *)touch {
-    if (gestureRecognizer == self.longPressGestureRecognizer) {
-        objc_setAssociatedObject(self.longPressGestureRecognizer, &kAssociatedUITouchKey, touch, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
-    }
-    else if (gestureRecognizer == self.doubleTapGes) {
+//    if (gestureRecognizer == self.longPressGestureRecognizer) {
+//        objc_setAssociatedObject(self.longPressGestureRecognizer, &kAssociatedUITouchKey, touch, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+//    }
+    if (gestureRecognizer == self.doubleTapGes) {
         objc_setAssociatedObject(self.doubleTapGes, &kAssociatedUITouchKey, touch, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
     }
     return YES;
@@ -1724,192 +1728,189 @@ NSString * const kCJLinkStringIdentifierAttributesName       = @"kCJLinkStringId
         //立即刷新界面
         [CATransaction flush];
     }
-    else{
-        if (self.enableCopy) {
-            CGPoint point = [touch locationInView:self];
-            [self caculateCTRunCopySizeBlock:^(){
-                CJGlyphRunStrokeItem *currentItem = [CJSelectCopyManagerView currentItem:point allRunItemArray:self->_allRunItemArray inset:1];
-                if (currentItem) {
-                    
-                    UIViewController *topVC = [self topViewController];
-                    UINavigationController *navCtr = nil;
-                    BOOL popGestureEnable = NO;
-                    if (topVC.navigationController) {
-                        navCtr = topVC.navigationController;
-                        popGestureEnable = navCtr.interactivePopGestureRecognizer.enabled;
-                        navCtr.interactivePopGestureRecognizer.enabled = NO;
-                    }
-                    
-                    //唤起 选择复制视图
-                    [[CJSelectCopyManagerView instance]showSelectViewInCJLabel:self atPoint:point runItem:[currentItem copy] maxLineWidth:self->_lineVerticalMaxWidth allCTLineVerticalArray:self->_CTLineVerticalLayoutArray allRunItemArray:self->_allRunItemArray hideViewBlock:^(){
-                        self.caculateCopySize = NO;
-                        if (navCtr) {
-                            navCtr.interactivePopGestureRecognizer.enabled = popGestureEnable;
-                        }
-                    }];
+}
+
+- (void)showSelectAtPoint:(CGPoint)point {
+    [self caculateCTRunCopySizeBlock:^(){
+        CJGlyphRunStrokeItem *currentItem = [CJSelectCopyManagerView currentItem:point allRunItemArray:self->_allRunItemArray inset:1];
+        if (currentItem) {
+            UIViewController *topVC = [self topViewController];
+            UINavigationController *navCtr = nil;
+            BOOL popGestureEnable = NO;
+            if (topVC.navigationController) {
+                navCtr = topVC.navigationController;
+                popGestureEnable = navCtr.interactivePopGestureRecognizer.enabled;
+                navCtr.interactivePopGestureRecognizer.enabled = NO;
+            }
+
+            //唤起 选择复制视图
+            [[CJSelectCopyManagerView instance]showSelectViewInCJLabel:self atPoint:point runItem:[currentItem copy] maxLineWidth:self->_lineVerticalMaxWidth allCTLineVerticalArray:self->_CTLineVerticalLayoutArray allRunItemArray:self->_allRunItemArray hideViewBlock:^(){
+                self.caculateCopySize = NO;
+                if (navCtr) {
+                    navCtr.interactivePopGestureRecognizer.enabled = popGestureEnable;
                 }
             }];
         }
-    }
+    }];
 }
 
 #pragma mark - UILongPressGestureRecognizer
-- (void)longPressGestureDidFire:(UILongPressGestureRecognizer *)sender {
-    
-    UITouch *touch = objc_getAssociatedObject(self.longPressGestureRecognizer, &kAssociatedUITouchKey);
-    CGPoint point = [touch locationInView:self];
-    BOOL isLinkItem = [self containslinkAtPoint:[touch locationInView:self]];
-    switch (sender.state) {
-        case UIGestureRecognizerStateBegan: {
-            if (isLinkItem) {
-                _longPress = YES;
-                if (_currentClickRunStrokeItem) {
-                    
-                    NSAttributedString *attributedString = [self.attributedText attributedSubstringFromRange:_currentClickRunStrokeItem.range];
-                    __weak typeof(self)wSelf = self;
-                    CJLabelLinkModel *linkModel =
-                    [[CJLabelLinkModel alloc]initWithAttributedString:attributedString
-                                                           insertView:_currentClickRunStrokeItem.insertView
-                                                       insertViewRect:_currentClickRunStrokeItem.locBounds
-                                                            parameter:_currentClickRunStrokeItem.parameter
-                                                            linkRange:_currentClickRunStrokeItem.range
-                                                                label:wSelf];
-                    
-                    
-                    if (_currentClickRunStrokeItem.longPressBlock) {
-                        _currentClickRunStrokeItem.longPressBlock(linkModel);
-                    }
-                    if (self.delegate && [self.delegate respondsToSelector:@selector(CJLable:didLongPressLink:)]) {
-                        [self.delegate CJLable:self didLongPressLink:linkModel];
-                    }
-                }
-                
-                _longPress = NO;
-                if (_currentClickRunStrokeItem) {
-                    _needRedrawn = _currentClickRunStrokeItem.needRedrawn;
-                    _currentClickRunStrokeItem = nil;
-                    [self setNeedsFramesetter];
-                    [self setNeedsDisplay];
-                    [CATransaction flush];
-                }
-            }
-            else{
-                if (self.enableCopy) {
-                    _afterLongPressEnd = NO;
-                    [self caculateCTRunCopySizeBlock:^(){
-                        if (!self->_afterLongPressEnd) {
-                            //发生长按，显示放大镜
-                            CJGlyphRunStrokeItem *currentItem = [CJSelectCopyManagerView currentItem:point allRunItemArray:self->_allRunItemArray inset:0.5];
-                            if (currentItem) {
-                                [[CJSelectCopyManagerView instance] showMagnifyInCJLabel:self magnifyPoint:point runItem:currentItem];
-                            }else{
-                                if (CGRectContainsPoint(self.bounds, point)) {
-                                    [[CJSelectCopyManagerView instance] showMagnifyInCJLabel:self magnifyPoint:point runItem:nil];
-                                }
-                            }
-                        }
-                    }];
-                }
-                //长按全选文本后弹出的UIMenu菜单（类似微信朋友圈全选复制功能）
-                if (self.menuItems) {
-                    
-                    CJCTLineLayoutModel *firstLine = nil;
-                    CJCTLineLayoutModel *lastLine = nil;
-                    CGFloat minX = 0;
-                    CGFloat maxLineWidth = 0;
-                    for (CJCTLineLayoutModel *lineModel in self->_CTLineVerticalLayoutArray) {
-                        minX = MIN(minX, lineModel.lineVerticalLayout.lineRect.origin.x);
-                        maxLineWidth = MAX(maxLineWidth, lineModel.lineVerticalLayout.lineRect.size.width);
-                        if (lineModel.lineIndex == 0) {
-                            firstLine = lineModel;
-                        }
-                        if (lineModel.lineIndex == self->_CTLineVerticalLayoutArray.count-1) {
-                            lastLine = lineModel;
-                        }
-                    }
-                    minX = minX + self.textInsets.left;
-                    maxLineWidth = maxLineWidth - self.textInsets.left - self.textInsets.right;
-                    
-                    CGFloat firstLineY = firstLine.lineVerticalLayout.lineRect.origin.y;
-                    CGFloat allTextRectHeight = lastLine.lineVerticalLayout.lineRect.origin.y + lastLine.lineVerticalLayout.lineRect.size.height - firstLineY;
-                    CGRect menuRect = CGRectMake(0, firstLineY, CGRectGetWidth(self.frame), CGRectGetHeight(self.frame));
-                    CGRect allTextRect = CGRectMake(minX-1, firstLineY-2, maxLineWidth+4, allTextRectHeight+4);
-                    
-                    UIView *allTextSelectBackView = [[UIView alloc]initWithFrame:allTextRect];
-                    allTextSelectBackView.tag = [@"allTextSelectBackView" hash];
-                    allTextSelectBackView.backgroundColor = self.selectTextBackColor;
-                    [self addSubview:allTextSelectBackView];
-                    
-                    [self becomeFirstResponder];
-                    [UIMenuController sharedMenuController].menuItems = self.menuItems;
-                    [[UIMenuController sharedMenuController] setTargetRect:menuRect inView:self];
-                    [[UIMenuController sharedMenuController] setMenuVisible:YES animated:YES];
-                }
-            }
-            
-            break;
-        }
-        case UIGestureRecognizerStateEnded:{
-            _afterLongPressEnd = YES;
-            if (!self.menuItems || self.menuItems.count == 0) {
-                [[CJSelectCopyManagerView instance] hideView];
-            }
-            if (isLinkItem) {
-                _longPress = NO;
-                if (_currentClickRunStrokeItem) {
-                    _needRedrawn = _currentClickRunStrokeItem.needRedrawn;
-                    _currentClickRunStrokeItem = nil;
-                    [self setNeedsFramesetter];
-                    [self setNeedsDisplay];
-                    [CATransaction flush];
-                }
-            }
-            //发生选择复制
-            if (self.enableCopy) {
-                CJGlyphRunStrokeItem *currentItem = [CJSelectCopyManagerView currentItem:point allRunItemArray:_allRunItemArray inset:1];
-                if (currentItem) {
-                    
-                    UIViewController *topVC = [self topViewController];
-                    UINavigationController *navCtr = nil;
-                    BOOL popGestureEnable = NO;
-                    if (topVC.navigationController) {
-                        navCtr = topVC.navigationController;
-                        popGestureEnable = navCtr.interactivePopGestureRecognizer.enabled;
-                        navCtr.interactivePopGestureRecognizer.enabled = NO;
-                    }
-                    
-                    //唤起 选择复制视图
-                    [[CJSelectCopyManagerView instance]showSelectViewInCJLabel:self atPoint:point runItem:[currentItem copy] maxLineWidth:_lineVerticalMaxWidth allCTLineVerticalArray:_CTLineVerticalLayoutArray allRunItemArray:_allRunItemArray hideViewBlock:^(){
-                        self.caculateCopySize = NO;
-                        if (navCtr) {
-                            navCtr.interactivePopGestureRecognizer.enabled = popGestureEnable;
-                        }
-                    }];
-                }else{
-                    [[CJSelectCopyManagerView instance] hideView];
-                }
-            }
-            break;
-        }
-        case UIGestureRecognizerStateChanged:
-        {
-            //只移动放大镜
-            if (self.enableCopy && ![CJSelectCopyManagerView instance].magnifierView.hidden) {
-                //发生长按，显示放大镜
-                CJGlyphRunStrokeItem *currentItem = [CJSelectCopyManagerView currentItem:point allRunItemArray:_allRunItemArray inset:1];
-                if (currentItem) {
-                    [[CJSelectCopyManagerView instance] showMagnifyInCJLabel:self magnifyPoint:point runItem:currentItem];
-                }else{
-                    if (CGRectContainsPoint(self.bounds, point)) {
-                        [[CJSelectCopyManagerView instance] showMagnifyInCJLabel:self magnifyPoint:point runItem:nil];
-                    }
-                }
-            }
-        }
-        default:
-            break;
-    }
-}
+//- (void)longPressGestureDidFire:(UILongPressGestureRecognizer *)sender {
+//    
+//    UITouch *touch = objc_getAssociatedObject(self.longPressGestureRecognizer, &kAssociatedUITouchKey);
+//    CGPoint point = [touch locationInView:self];
+//    BOOL isLinkItem = [self containslinkAtPoint:[touch locationInView:self]];
+//    switch (sender.state) {
+//        case UIGestureRecognizerStateBegan: {
+//            if (isLinkItem) {
+//                _longPress = YES;
+//                if (_currentClickRunStrokeItem) {
+//                    
+//                    NSAttributedString *attributedString = [self.attributedText attributedSubstringFromRange:_currentClickRunStrokeItem.range];
+//                    __weak typeof(self)wSelf = self;
+//                    CJLabelLinkModel *linkModel =
+//                    [[CJLabelLinkModel alloc]initWithAttributedString:attributedString
+//                                                           insertView:_currentClickRunStrokeItem.insertView
+//                                                       insertViewRect:_currentClickRunStrokeItem.locBounds
+//                                                            parameter:_currentClickRunStrokeItem.parameter
+//                                                            linkRange:_currentClickRunStrokeItem.range
+//                                                                label:wSelf];
+//                    
+//                    
+//                    if (_currentClickRunStrokeItem.longPressBlock) {
+//                        _currentClickRunStrokeItem.longPressBlock(linkModel);
+//                    }
+//                    if (self.delegate && [self.delegate respondsToSelector:@selector(CJLable:didLongPressLink:)]) {
+//                        [self.delegate CJLable:self didLongPressLink:linkModel];
+//                    }
+//                }
+//                
+//                _longPress = NO;
+//                if (_currentClickRunStrokeItem) {
+//                    _needRedrawn = _currentClickRunStrokeItem.needRedrawn;
+//                    _currentClickRunStrokeItem = nil;
+//                    [self setNeedsFramesetter];
+//                    [self setNeedsDisplay];
+//                    [CATransaction flush];
+//                }
+//            }
+//            else{
+//                if (self.enableCopy) {
+//                    _afterLongPressEnd = NO;
+//                    [self caculateCTRunCopySizeBlock:^(){
+//                        if (!self->_afterLongPressEnd) {
+//                            //发生长按，显示放大镜
+//                            CJGlyphRunStrokeItem *currentItem = [CJSelectCopyManagerView currentItem:point allRunItemArray:self->_allRunItemArray inset:0.5];
+//                            if (currentItem) {
+//                                [[CJSelectCopyManagerView instance] showMagnifyInCJLabel:self magnifyPoint:point runItem:currentItem];
+//                            }else{
+//                                if (CGRectContainsPoint(self.bounds, point)) {
+//                                    [[CJSelectCopyManagerView instance] showMagnifyInCJLabel:self magnifyPoint:point runItem:nil];
+//                                }
+//                            }
+//                        }
+//                    }];
+//                }
+//                //长按全选文本后弹出的UIMenu菜单（类似微信朋友圈全选复制功能）
+//                if (self.menuItems) {
+//                    
+//                    CJCTLineLayoutModel *firstLine = nil;
+//                    CJCTLineLayoutModel *lastLine = nil;
+//                    CGFloat minX = 0;
+//                    CGFloat maxLineWidth = 0;
+//                    for (CJCTLineLayoutModel *lineModel in self->_CTLineVerticalLayoutArray) {
+//                        minX = MIN(minX, lineModel.lineVerticalLayout.lineRect.origin.x);
+//                        maxLineWidth = MAX(maxLineWidth, lineModel.lineVerticalLayout.lineRect.size.width);
+//                        if (lineModel.lineIndex == 0) {
+//                            firstLine = lineModel;
+//                        }
+//                        if (lineModel.lineIndex == self->_CTLineVerticalLayoutArray.count-1) {
+//                            lastLine = lineModel;
+//                        }
+//                    }
+//                    minX = minX + self.textInsets.left;
+//                    maxLineWidth = maxLineWidth - self.textInsets.left - self.textInsets.right;
+//                    
+//                    CGFloat firstLineY = firstLine.lineVerticalLayout.lineRect.origin.y;
+//                    CGFloat allTextRectHeight = lastLine.lineVerticalLayout.lineRect.origin.y + lastLine.lineVerticalLayout.lineRect.size.height - firstLineY;
+//                    CGRect menuRect = CGRectMake(0, firstLineY, CGRectGetWidth(self.frame), CGRectGetHeight(self.frame));
+//                    CGRect allTextRect = CGRectMake(minX-1, firstLineY-2, maxLineWidth+4, allTextRectHeight+4);
+//                    
+//                    UIView *allTextSelectBackView = [[UIView alloc]initWithFrame:allTextRect];
+//                    allTextSelectBackView.tag = [@"allTextSelectBackView" hash];
+//                    allTextSelectBackView.backgroundColor = self.selectTextBackColor;
+//                    [self addSubview:allTextSelectBackView];
+//                    
+//                    [self becomeFirstResponder];
+//                    [UIMenuController sharedMenuController].menuItems = self.menuItems;
+//                    [[UIMenuController sharedMenuController] setTargetRect:menuRect inView:self];
+//                    [[UIMenuController sharedMenuController] setMenuVisible:YES animated:YES];
+//                }
+//            }
+//            
+//            break;
+//        }
+//        case UIGestureRecognizerStateEnded:{
+//            _afterLongPressEnd = YES;
+//            if (!self.menuItems || self.menuItems.count == 0) {
+//                [[CJSelectCopyManagerView instance] hideView];
+//            }
+//            if (isLinkItem) {
+//                _longPress = NO;
+//                if (_currentClickRunStrokeItem) {
+//                    _needRedrawn = _currentClickRunStrokeItem.needRedrawn;
+//                    _currentClickRunStrokeItem = nil;
+//                    [self setNeedsFramesetter];
+//                    [self setNeedsDisplay];
+//                    [CATransaction flush];
+//                }
+//            }
+//            //发生选择复制
+//            if (self.enableCopy) {
+//                CJGlyphRunStrokeItem *currentItem = [CJSelectCopyManagerView currentItem:point allRunItemArray:_allRunItemArray inset:1];
+//                if (currentItem) {
+//                    
+//                    UIViewController *topVC = [self topViewController];
+//                    UINavigationController *navCtr = nil;
+//                    BOOL popGestureEnable = NO;
+//                    if (topVC.navigationController) {
+//                        navCtr = topVC.navigationController;
+//                        popGestureEnable = navCtr.interactivePopGestureRecognizer.enabled;
+//                        navCtr.interactivePopGestureRecognizer.enabled = NO;
+//                    }
+//                    
+//                    //唤起 选择复制视图
+//                    [[CJSelectCopyManagerView instance]showSelectViewInCJLabel:self atPoint:point runItem:[currentItem copy] maxLineWidth:_lineVerticalMaxWidth allCTLineVerticalArray:_CTLineVerticalLayoutArray allRunItemArray:_allRunItemArray hideViewBlock:^(){
+//                        self.caculateCopySize = NO;
+//                        if (navCtr) {
+//                            navCtr.interactivePopGestureRecognizer.enabled = popGestureEnable;
+//                        }
+//                    }];
+//                }else{
+//                    [[CJSelectCopyManagerView instance] hideView];
+//                }
+//            }
+//            break;
+//        }
+//        case UIGestureRecognizerStateChanged:
+//        {
+//            //只移动放大镜
+//            if (self.enableCopy && ![CJSelectCopyManagerView instance].magnifierView.hidden) {
+//                //发生长按，显示放大镜
+//                CJGlyphRunStrokeItem *currentItem = [CJSelectCopyManagerView currentItem:point allRunItemArray:_allRunItemArray inset:1];
+//                if (currentItem) {
+//                    [[CJSelectCopyManagerView instance] showMagnifyInCJLabel:self magnifyPoint:point runItem:currentItem];
+//                }else{
+//                    if (CGRectContainsPoint(self.bounds, point)) {
+//                        [[CJSelectCopyManagerView instance] showMagnifyInCJLabel:self magnifyPoint:point runItem:nil];
+//                    }
+//                }
+//            }
+//        }
+//        default:
+//            break;
+//    }
+//}
 
 + (instancetype)instance {
     static CJLabel *manager = nil;

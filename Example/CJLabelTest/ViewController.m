@@ -102,7 +102,16 @@
             configure.parameter = @"CJLabel";
             attStr = [CJLabel configureAttrString:attStr withString:@"CJLabel" sameStringEnable:YES configure:configure];
         }
-        
+
+        NSDataDetector * dataDetector = [[NSDataDetector alloc] initWithTypes:NSTextCheckingTypeLink error:nil];
+
+        NSArray *arr = [dataDetector matchesInString:attStr.string options:0 range:NSMakeRange(0, attStr.length)];
+
+        for (NSTextCheckingResult *result in arr) {
+            NSString *url = [attStr.string substringWithRange:result.range];
+            NSLog(@"url: %@", url);
+        }
+
         [attStr addAttribute:NSParagraphStyleAttributeName value:paragraph range:NSMakeRange(0, attStr.length)];
         [self.espressos addObject:attStr];
     }
